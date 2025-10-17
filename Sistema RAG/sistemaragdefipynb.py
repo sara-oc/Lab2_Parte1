@@ -7,6 +7,15 @@ Original file is located at
     https://colab.research.google.com/drive/1snuQZjiT03-F0QjV0E_BgH59w0hmflHv
 """
 
+# -*- coding: utf-8 -*-
+"""Sistemaragdefipynb
+
+Generado automaticamente por Colab
+
+el archivo original se encuentra en:
+    https://colab.research.google.com/drive/1snuQZjiT03-F0QjV0E_BgH59w0hmflHv
+"""
+
 !pip install -q langchain
 !pip install -q torch
 !pip install -q transformers
@@ -132,13 +141,6 @@ def get_embeddings_model(model_path=None):
 
   return embeddings1, embeddings2, embeddings3
 
-"""**Modelos seleccionados**
-
-Se eligieron tres modelos de embeddings: sentence-transformers/all-MiniLM-l6-v2, sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 y intfloat/multilingual-e5-base, porque permiten evaluar diferentes combinaciones de rendimiento, soporte para el idioma español y precisión semántica. El primero es un modelo base rápido y liviano, ideal para pruebas iniciales; el segundo añade comprensión multilingüe, lo que mejora su desempeño en textos en español; y el tercero, aunque más pesado, ofrece una representación semántica más precisa y fue el que mejor respondió en las pruebas con preguntas clínicas sobre neumonía.
-
-Se desecharon otros modelos como distiluse-base-multilingual-cased-v2, all-mpnet-base-v2, sentence-t5-base y multi-qa-MiniLM-L6-cos-v1, ya que o bien están optimizados solo para inglés, no ofrecen mejoras significativas en comprensión en español, o requieren mayores recursos computacionales, lo que los hace poco prácticos para un sistema de recuperación ligera. Además, se descartaron versiones más grandes de la familia E5 y MiniLM (como intfloat/multilingual-e5-large o all-MiniLM-L12-v2) porque su tamaño aumentaba considerablemente el tiempo de respuesta y el consumo de memoria sin un incremento proporcional en la precisión. Por tanto, se mantuvieron los tres modelos seleccionados por su equilibrio entre desempeño, compatibilidad con español y eficiencia computacional.
-"""
-
 embeddings1, embeddings2, embeddings3 = get_embeddings_model()
 
 text = "La neumonía es una infección que afecta los pulmones." # Texto de prueba que se convertirá en un vector numérico (embedding)
@@ -205,27 +207,15 @@ print(contexto2)
 print("\n Contexto del modelo 3:\n")
 print(contexto3)
 
-"""Al evaluar los tres modelos de embeddings frente a la pregunta ¿síntomas de la neumonía?, se observó que el modelo 3 (intfloat/multilingual-e5-base) fue el que ofreció el mejor resultado, ya que recuperó un fragmento del texto donde se describen directamente las manifestaciones clínicas de la enfermedad: malestar general, fiebre, escalofríos, tos, expectoración y dolor torácico, entre otros. Este modelo mostró una mayor precisión semántica, identificando la sección del documento más relevante en función del significado de la pregunta.
+"""**LLM: modelos the question-answering**
 
-Por el contrario, el modelo 1 (all-MiniLM-l6-v2), al estar entrenado principalmente en inglés y con menor capacidad semántica, recuperó un párrafo relacionado con la falta de respuesta terapéutica, sin conexión con los síntomas. El modelo 2 (paraphrase-multilingual-MiniLM-L12-v2), aunque multilingüe y compatible con español, priorizó información sobre tratamientos y clasificación de neumonías, lo que indica que comprendió el tema general, pero no la intención específica de la pregunta.
-
-En conclusión, el modelo intfloat/multilingual-e5-base destacó por su mayor capacidad para relacionar términos médicos y contexto clínico, proporcionando la respuesta más completa y relevante sobre los síntomas de la neumonía, razón por la cual fue considerado el modelo más adecuado para este tipo de consultas médicas.
-
-**LLM: modelos the question-answering**
 """
 
 import torch
 from transformers import AutoModelForQuestionAnswering
 from transformers import TFAutoModelForQuestionAnswering
 
-"""Se seleccionaron tres modelos de lenguaje con el objetivo de evaluar el desempeño en tareas de pregunta–respuesta aplicadas a textos clínicos en español, considerando la influencia del idioma y la eficiencia computacional.
-
-El modelo mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es se eligió por estar entrenado específicamente en español, lo que lo convertía en una referencia ideal para analizar el comportamiento de un modelo monolingüe en un contexto médico técnico. El modelo deepset/minilm-uncased-squad2, aunque entrenado en inglés, se incluyó por su alta eficiencia y generalización semántica, además de ser un modelo compacto (MiniLM) ampliamente probado en tareas de comprensión lectora. Su inclusión buscaba verificar si un modelo en inglés podía mantener un buen rendimiento con documentos en español, lo cual finalmente se comprobó. Por último, distilbert-base-multilingual-cased fue seleccionado por su capacidad multilingüe y bajo costo computacional, lo que permite ejecutar el sistema en entornos con recursos limitados y comparar su desempeño frente a modelos más grandes.
-
-En conjunto, estos tres modelos permitieron contrastar precisión, idioma y eficiencia, cubriendo desde un modelo entrenado exclusivamente en español hasta uno multilingüe y otro en inglés de arquitectura liviana. Esta selección equilibrada garantizó una evaluación completa del rendimiento del sistema RAG en distintas condiciones lingüísticas y de procesamiento.
-
-con mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es
-"""
+"""*con mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es*"""
 
 question = "¿Qué es la neumonía?"
 context = get_context(db3, question, top_k=3)
@@ -283,7 +273,7 @@ pipe = pipeline("question-answering", model=model, tokenizer=tokenizer)
 
 pipe(question=question, context=context, topk=3)
 
-"""**modelo deepset/minilm-uncased-squad2**"""
+"""*modelo deepset/minilm-uncased-squad2*"""
 
 question = "¿Qué es la neumonía?"
 context = get_context(db3, question, top_k=9)
@@ -337,10 +327,7 @@ pipe = pipeline("question-answering", model=model, tokenizer=tokenizer)
 
 pipe(question=question, context=context, topk=3)
 
-"""se puede notar que este modelo trbaja mejor y logra resporder a esa parte rara
-
-** modelo distilbert-base-multilingual-cased**
-"""
+"""* modelo distilbert-base-multilingual-cased*"""
 
 question = "¿Qué es la neumonía?"
 context = get_context(db3, question, top_k=9)
@@ -390,10 +377,7 @@ pipe = pipeline("question-answering", model=model, tokenizer=tokenizer)
 
 pipe(question=question, context=context, topk=3)
 
-"""Al evaluar los tres modelos de lenguaje (LLM), se observó que el modelo mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es ofreció los mejores resultados, mostrando respuestas coherentes, completas y directamente relacionadas con las preguntas clínicas, gracias a su entrenamiento específico en español y su afinación con el conjunto SQuAD2-es(Esto obliga al modelo no solo a encontrar la respuesta correcta cuando existe, sino también a reconocer cuándo no hay información suficiente en el texto). En cambio, el segundo modelo, deepset/minilm-uncased-squad2, aunque eficiente y rápido, tiende a confundirse con el idioma, generando respuestas parciales o inexactas al procesar textos médicos en español debido a su entrenamiento exclusivo en inglés. Finalmente, el modelo distilbert-base-multilingual-cased presentó un desempeño notablemente inferior: sus respuestas fueron vagas, incompletas y, en ocasiones, incoherentes, lo que se explica por su menor capacidad de comprensión contextual y la simplificación inherente a su arquitectura liviana. En síntesis, el primer modelo fue seleccionado por su equilibrio óptimo entre precisión semántica, dominio del idioma y fiabilidad en la extracción de información médica.
-
-**pregunta ingresada por el usuario:**
-"""
+"""**pregunta ingresada por el usuario:**"""
 
 question = input("\ningrese una pregunta:").strip()
 context = get_context(db3, question, top_k=3)
