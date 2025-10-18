@@ -28,10 +28,10 @@ el archivo original se encuentra en:
 
 from langchain.document_loaders import HuggingFaceDatasetLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter #divisiones d texto
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings # Permite generar representaciones numéricas (embeddings) de textos usando modelos de Hugging Face
 from langchain.vectorstores import FAISS # buscador de similitud
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering # AutoModelForQuestionAnswering carga un modelo preentrenado para tareas de preguntas y respuestas
+from transformers import AutoTokenizer, pipeline # Permite crear pipelines (flujos automáticos) con modelos de Hugging Face
 from langchain import HuggingFacePipeline
 from langchain.chains import RetrievalQA
 import torch # las otras librerias pueden estarlo llamando
